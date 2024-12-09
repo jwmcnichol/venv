@@ -1,0 +1,50 @@
+/* SELECT 
+    1 as activityID,
+	1 as quantity, 
+	'currency' as materialGroup,
+	'USER_INSERT' AS materialCategory,
+	999999 AS materialTypeID,          -- Custom TypeID for ISK
+    'ISK' AS materialName,             -- Material Name for ISK
+    isk_cost AS materialQty,                -- ISK cost as the quantity
+    type_id AS iapBlueprintID,           -- Match typeID from lpOffers to iapBlueprintID
+	 (SELECT TOP 1 productTypeID 
+         FROM industryCombined ic 
+         WHERE ic.iapBlueprintID = lp.type_id) AS productTypeID
+FROM lpOffersFW lp
+WHERE lp.required_items = '[]' -- Only select rows where requirements are empty or NULL
+AND lp.isk_cost > 0;                        -- Ensure ISK cost is greater than 0
+
+*/
+
+/* BEGIN TRANSACTION;
+ALTER TABLE industryCombined ALTER COLUMN materialQty BIGINT;
+
+INSERT INTO industryCombined (
+    activityID, 
+    quantity, 
+    materialGroup, 
+   
+    materialTypeID, 
+    materialName, 
+    materialQty, 
+    iapBlueprintID, 
+    productTypeID 
+
+ SELECT 
+    1 AS activityID,
+    1 AS quantity, 
+    'currency' AS materialGroup,
+    
+    999999 AS materialTypeID,          -- Custom TypeID for ISK
+    'ISK' AS materialName,             -- Material Name for ISK
+    isk_cost AS materialQty,           -- ISK cost as the quantity
+    type_id AS iapBlueprintID,         -- Match typeID from lpOffers to iapBlueprintID
+    (SELECT TOP 1 productTypeID 
+         FROM industryCombined ic 
+         WHERE ic.iapBlueprintID = lp.type_id) AS productTypeID
+FROM lpOffersFW lp
+WHERE lp.required_items = '[]'         -- Only select rows where requirements are empty or NULL
+AND lp.isk_cost > 0;                   -- Ensure ISK cost is greater than 0
+
+COMMIT TRANSACTION; */
+
