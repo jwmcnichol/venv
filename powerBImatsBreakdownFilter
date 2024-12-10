@@ -1,0 +1,13 @@
+Total Material Cost = 
+SUMX(
+    industryCombined,
+    industryCombined[materialQty] * 
+    CALCULATE(
+        SUM(subcapmats[average]),
+        FILTER(
+            subcapmats,
+            subcapmats[type_id] = industryCombined[materialTypeID]
+            && subcapmats[date] = SELECTEDVALUE(subcapmats[date])
+        )
+    )
+)
